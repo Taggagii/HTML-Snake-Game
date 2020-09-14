@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Snake Game</title>
+    </head>
+    <body>
+        <canvas id = "myCanvas" width = "650" height = "650" style = "border:1px solid black">Your browser does not support HTML5 canvas</canvas>        
+    </body>
+</html>
+
+<script> //basic functions 
+    var canvas = document.getElementById("myCanvas");
+    var context = canvas.getContext("2d");
+
+    //game information
+    var blockCount = 40;
+    var size = canvas.width / blockCount;
+    var fruitSize = size / 2;
+    var fruitColor = "red";
+    var snakeColor = "black";
+    var snakeLocations = [[snapToGrid(canvas.width / 2), snapToGrid(canvas.height / 2)]];
+    snakeLocations.push([snakeLocations[0][0], snakeLocations[0][1] + size]);
+    var snakeDirection = "still";
+    var snakeTurning = false;
+    var snakeGrowing = false;
+    var length = 1;
+    var fruitPos = generateFruitLocation();
+
+    //initalizing board
+    refresh();
+
+    function updateScore()
+    {
+        context.font = "240px Arial";
+        context.fillStyle = "rgb(139, 129, 129)";
+        context.textAlign = "center";
+        context.fillText(length, canvas.width/2, canvas.height/2 + (canvas.height/8));
+    }
+
+    function gameOver()
+    {
+        alert(`Game Over\nYour final length was ${length}`);
+        location.reload();
+    }
+
+
+    function erase()
+    {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function refresh()
+    {
+        erase();
+        //createGrid();
+        moveSnake();
+        checkSnakeSnakeCollisions();
+        checkSnakeFruitCollisions();
+        updateScore();
+        drawSnake();
+        drawFruit();
+        setTimeout(refresh, 100);
+        
+    }
+
+    function snapToGrid(value)
+    {
+        return Math.trunc(value/size) * size;
+    }
+
+    function generateFruitLocation()
+    {
+        var possibleValue = [];
+        var same = false;
+        do 
+        {
+            possibleValue = [snapToGrid(Math.random() * canvas.width), snapToGrid(Math.random() * canvas.height)];
+            for (var i = 0; i < snakeLocations.length; i++)
+            {
+                if (snakeLocations[i] == possibleValue)
+                {
+                    same = true;
+                    break;
+                }
+            }
+        } while (same)
+        return possibleValue;
+
+    }
+
+    function drawFruit()
+    {
+        context.beginPath();
+        context.fillStyle = fruitColor;
+        context.arc(fruitPos[0] + fruitSize, fruitPos[1] + fruitSize, fruitSize, 0, 2 * Math.PI);
+        context.fill();
+    }
+
+    function checkSnakeSnakeCollisions()
+    {
+        for (var i = 1; i < snakeLocations.length; i++)
+            if (snakeLocations[i][0] == snakeLocations[0][0] && snakeLocations[i][1] == snakeLocations[0][1])
+                gameOver();
+    }
+
+    function checkSnakeFruitCollisions()
+    {
+        
+        if (snakeLocations[0][0] == fruitPos[0] && snakeLocations[0][1] == fruitPos[1])
+        {
+            fruitPos = generateFruitLocation();
+            snakeGrowing = true;
+            length++;
+        }
+    }
+
+    function drawSnake()
+    {
+        snakeLocations.forEach(function(position)
+        {
+            var x = position[0], y = position[1];
+            context.beginPath()
+            context.fillStyle = snakeColor;
+            if (canvas.width < x + size || x < 0 || canvas.height < y + size || y < 0) 
+            {
+                gameOver();
+            }
+            context.rect(x, y, size, size);
+            context.fill();
+        });
+    }
+
+    function turnSnake(keyPress)
+    {
+        snakeTurning = true;
+        switch(keyPress)
+        {
+            case "arrowup":
+                if (snakeDirection != "down")
+                    snakeDirection = "up";
+                break;
+            case "arrowdown":
+                if (snakeDirection != "up")
+                    snakeDirection = "down";
+                break;
+            case "arrowright":
+                if (snakeDirection != "left")
+                    snakeDirection = "right";
+                break;
+            case "arrowleft":
+                if (snakeDirection != "right")
+                    snakeDirection = "left";
+                break;
+            default:
+                snakeTurning = false;
+                break;
+        }
+    }
+
+    function moveSnake()
+    {
+        snakeTurning = false;
+        switch(snakeDirection)
+        {
+            case "up":
+                var x = snakeLocations[0][0], y = snakeLocations[0][1] - size;
+                if (!snakeGrowing)
+                    snakeLocations.pop();
+                else
+                    snakeGrowing = false
+                snakeLocations.unshift([x, y]);
+                break;
+            case "down":
+                var x = snakeLocations[0][0], y = snakeLocations[0][1] + size;
+                if (!snakeGrowing)
+                    snakeLocations.pop();
+                else
+                    snakeGrowing = false
+                snakeLocations.unshift([x, y]);
+                break;
+            case "right":
+                var x = snakeLocations[0][0] + size, y = snakeLocations[0][1];
+                if (!snakeGrowing)
+                    snakeLocations.pop();
+                else
+                    snakeGrowing = false
+                snakeLocations.unshift([x, y]);
+                break;
+            case "left":
+                var x = snakeLocations[0][0] - size, y = snakeLocations[0][1];
+                if (!snakeGrowing)
+                    snakeLocations.pop();
+                else
+                    snakeGrowing = false
+                snakeLocations.unshift([x, y]);
+                break;
+        }
+        
+    }
+
+    function createGrid()
+    {
+        for (var i = size; i < canvas.width; i += size)
+        {
+            context.beginPath()
+            context.moveTo(i, 0);
+            context.lineTo(i, canvas.height);
+            context.moveTo(0, i);
+            context.lineTo(canvas.width, i);
+            context.stroke();
+        }
+    }
+</script>
+
+
+<script>       
+    document.addEventListener('keydown', function(event){
+        event.preventDefault();
+        
+        const key = event.key.toLowerCase();
+        if (!snakeTurning)
+            turnSnake(key);
+    });
+</script>
