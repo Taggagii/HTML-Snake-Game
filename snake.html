@@ -239,8 +239,8 @@
 
 <script>       
     document.addEventListener('keydown', function(event){
-        event.preventDefault();
-        
+        if (event.keyCode > 37 && event.keyCode < 41)
+            event.preventDefault();
         const key = event.key.toLowerCase();
         turnSnake(key);
     });
