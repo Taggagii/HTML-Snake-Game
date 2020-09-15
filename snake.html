@@ -15,14 +15,18 @@
                 font-size: 25px;
             }
         </style>
-        <div style = "text-align:center">
+        <div style = "text-align:left">
+            <input type = "checkbox" id = "buttonCheckboxToggle" onclick = "checkBoxButtons()">
+            <label for = "buttonCheckboxToggle">Toggle Buttons</label>
+            
+        </div>
+        <div style = "text-align:center; display:none" id = "buttons" >
             <input type = "button" class = "button" value = "up" onclick="turnSnake('arrowup');">
             <br/>
             <input type = "button" class = "button" value = "left" onclick="turnSnake('arrowleft');">
             <input type = "button" class = "button" value = "right" onclick="turnSnake('arrowright');">
             <br/>
             <input type = "button" class = "button" value = "down" onclick="turnSnake('arrowdown');">
-            
         </div>
         
         
@@ -237,7 +241,21 @@
 </script>
 
 
-<script>       
+<script> 
+    function checkBoxButtons()
+    {
+        var checkBox = document.getElementById("buttonCheckboxToggle");
+        var buttons = document.getElementById("buttons");
+
+        if (checkBox.checked)
+        {
+            buttons.style.display = 'block';
+        }
+        else
+        {
+            buttons.style.display = 'none';
+        }
+    }
     document.addEventListener('keydown', function(event){
         if (event.keyCode > 37 && event.keyCode < 41)
             event.preventDefault();
