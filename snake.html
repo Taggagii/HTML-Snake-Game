@@ -98,7 +98,7 @@
             possibleValue = [snapToGrid(Math.random() * canvas.width), snapToGrid(Math.random() * canvas.height)];
             for (var i = 0; i < snakeLocations.length; i++)
             {
-                if (snakeLocations[i] == possibleValue)
+                if (snakeLocations[i][0] == possibleValue[0] && snakeLocations[i][1] == possibleValue[1])
                 {
                     same = true;
                     break;
@@ -140,7 +140,7 @@
         snakeLocations.forEach(function(position)
         {
             var x = position[0], y = position[1];
-            context.beginPath()
+            context.beginPath();
             context.fillStyle = snakeColor;
             if (canvas.width < x + size || x < 0 || canvas.height < y + size || y < 0) 
             {
@@ -191,7 +191,7 @@
                 if (!snakeGrowing)
                     snakeLocations.pop();
                 else
-                    snakeGrowing = false
+                    snakeGrowing = false;
                 snakeLocations.unshift([x, y]);
                 break;
             case "down":
@@ -199,7 +199,7 @@
                 if (!snakeGrowing)
                     snakeLocations.pop();
                 else
-                    snakeGrowing = false
+                    snakeGrowing = false;
                 snakeLocations.unshift([x, y]);
                 break;
             case "right":
@@ -207,7 +207,7 @@
                 if (!snakeGrowing)
                     snakeLocations.pop();
                 else
-                    snakeGrowing = false
+                    snakeGrowing = false;
                 snakeLocations.unshift([x, y]);
                 break;
             case "left":
@@ -215,7 +215,7 @@
                 if (!snakeGrowing)
                     snakeLocations.pop();
                 else
-                    snakeGrowing = false
+                    snakeGrowing = false;
                 snakeLocations.unshift([x, y]);
                 break;
         }
@@ -226,7 +226,7 @@
     {
         for (var i = size; i < canvas.width; i += size)
         {
-            context.beginPath()
+            context.beginPath();
             context.moveTo(i, 0);
             context.lineTo(i, canvas.height);
             context.moveTo(0, i);
