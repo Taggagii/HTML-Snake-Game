@@ -6,6 +6,7 @@
     <body>
         <div style = "text-align:center">
             <canvas id = "myCanvas" width = "650" height = "650" style = "border:1px solid black">Your browser does not support HTML5 canvas</canvas>        
+            <input type = "button" value = "PAUSE" onclick = "pause()">
         </div>
         <br/>
         <style>
@@ -15,10 +16,11 @@
                 font-size: 25px;
             }
         </style>
+        
         <div style = "text-align:left">
             <input type = "checkbox" id = "buttonCheckboxToggle" onclick = "checkBoxButtons()">
             <label for = "buttonCheckboxToggle">Toggle Buttons</label>
-            
+        
         </div>
         <div style = "text-align:center; display:none" id = "buttons" >
             <input type = "button" class = "button" value = "up" onclick="turnSnake('arrowup');">
@@ -46,20 +48,46 @@
     var snakeLocations = [[snapToGrid(canvas.width / 2), snapToGrid(canvas.height / 2)]];
     snakeLocations.push([snakeLocations[0][0], snakeLocations[0][1] + size]);
     var snakeDirection = "still";
+    var previousSnakeDirection = "still";
     var snakeTurning = false;
     var snakeGrowing = false;
     var length = 1;
+    var lengthHolder = 0;
     var fruitPos = generateFruitLocation();
 
     //initalizing board
     refresh();
 
+
+    function pause()
+    {
+        if (snakeDirection != "still")
+        {
+            previousSnakeDirection = snakeDirection;
+            snakeDirection = "still";
+        }
+        else
+        {
+            snakeDirection = previousSnakeDirection;
+        }
+    }
+
     function updateScore()
     {
-        context.font = "240px Arial";
-        context.fillStyle = "rgb(139, 129, 129)";
-        context.textAlign = "center";
-        context.fillText(length, canvas.width/2, canvas.height/2 + (canvas.height/8));
+        if (snakeDirection == "still")
+        {
+            context.font = "120px Arial";
+            context.fillStyle = "rgb(139, 129, 129)";
+            context.textAlign = "center";
+            context.fillText("PAUSED", canvas.width/2, canvas.height/2);
+        }
+        else
+        {
+            context.font = "240px Arial";
+            context.fillStyle = "rgb(139, 129, 129)";
+            context.textAlign = "center";
+            context.fillText(length, canvas.width/2, canvas.height/2 + (canvas.height/8));
+        }
     }
 
     function gameOver()
@@ -259,7 +287,10 @@
     document.addEventListener('keydown', function(event){
         if (event.keyCode > 37 && event.keyCode < 41)
             event.preventDefault();
+        if (event.keyCode == 27)
+            pause();
         const key = event.key.toLowerCase();
         turnSnake(key);
+
     });
 </script>
