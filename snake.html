@@ -288,7 +288,10 @@
         if (event.keyCode > 37 && event.keyCode < 41)
             event.preventDefault();
         if (event.keyCode == 27)
+        {
+            event.preventDefault();
             pause();
+        }
         const key = event.key.toLowerCase();
         turnSnake(key);
 
