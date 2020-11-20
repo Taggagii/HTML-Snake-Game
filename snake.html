@@ -54,6 +54,7 @@
     var length = 1;
     var lengthHolder = 0;
     var fruitPos = generateFruitLocation();
+    var refreshRate = 100;
 
     //initalizing board
     refresh();
@@ -112,7 +113,7 @@
         updateScore();
         drawSnake();
         drawFruit();
-        setTimeout(refresh, 100);
+        setTimeout(refresh, refreshRate);
         
     }
 
