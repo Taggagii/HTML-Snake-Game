@@ -51,10 +51,12 @@
     var previousSnakeDirection = "still";
     var snakeTurning = false;
     var snakeGrowing = false;
+    var alwaysGrowing = false;
     var length = 1;
     var lengthHolder = 0;
     var fruitPos = generateFruitLocation();
     var refreshRate = 100;
+    //var maxRefreshRate = 100;
 
     //initalizing board
     refresh();
@@ -94,7 +96,12 @@
     function gameOver()
     {
         alert(`Game Over\nYour final length was ${length}`);
-        location.reload();
+        snakeDirection = "still";
+        snakeLocations = [[snapToGrid(canvas.width / 2), snapToGrid(canvas.height / 2)]];
+    snakeLocations.push([snakeLocations[0][0], snakeLocations[0][1] + size]);
+        length = 1;
+        lengthHolder = 0;
+        refreshRate = 50;
     }
 
 
@@ -105,6 +112,10 @@
 
     function refresh()
     {
+        if (alwaysGrowing)
+        {
+            snakeGrowing = true;
+        }
         erase();
         //createGrid();
         moveSnake();
@@ -113,8 +124,10 @@
         updateScore();
         drawSnake();
         drawFruit();
+        // var currentRefreshRate = (refreshRate + length);
+        // if (currentRefreshRate > maxRefreshRate)
+        //     currentRefreshRate = maxRefreshRate;
         setTimeout(refresh, refreshRate);
-        
     }
 
     function snapToGrid(value)
@@ -164,7 +177,6 @@
         {
             fruitPos = generateFruitLocation();
             snakeGrowing = true;
-            length++;
         }
     }
 
@@ -174,13 +186,19 @@
         {
             var x = position[0], y = position[1];
             context.beginPath();
-            context.fillStyle = snakeColor;
+            
             if (canvas.width < x + size || x < 0 || canvas.height < y + size || y < 0) 
             {
                 gameOver();
             }
             context.rect(x, y, size, size);
+            context.fillRect(x, y, size, size)
+            context.lineWidth = 3;
+            context.strokeStyle = "rgb(139, 129, 129)";
+            context.stroke();
+            context.fillStyle = snakeColor;
             context.fill();
+            
         });
     }
 
@@ -192,18 +210,54 @@
             switch(keyPress)
             {
                 case "arrowup":
+                    if (snakeDirection === "still")
+                    {
+                        if (previousSnakeDirection === "still") 
+                        {
+                            snakeDirection = "up";
+                        }
+                        pause(); 
+                        break;
+                    }
                     if (snakeDirection != "down")
                         snakeDirection = "up";
                     break;
                 case "arrowdown":
+                    if (snakeDirection === "still")
+                    {
+                        if (previousSnakeDirection === "still") 
+                        {
+                            snakeDirection = "down";
+                        }
+                        pause(); 
+                        break;
+                    }
                     if (snakeDirection != "up")
                         snakeDirection = "down";
                     break;
                 case "arrowright":
+                    if (snakeDirection === "still")
+                    {
+                        if (previousSnakeDirection === "still") 
+                        {
+                            snakeDirection = "right";
+                        }
+                        pause(); 
+                        break;
+                    }
                     if (snakeDirection != "left")
                         snakeDirection = "right";
                     break;
                 case "arrowleft":
+                    if (snakeDirection === "still")
+                    {
+                        if (previousSnakeDirection === "still") 
+                        {
+                            snakeDirection = "left";
+                        }
+                        pause(); 
+                        break;
+                    }
                     if (snakeDirection != "right")
                         snakeDirection = "left";
                     break;
@@ -224,7 +278,10 @@
                 if (!snakeGrowing)
                     snakeLocations.pop();
                 else
+                {
                     snakeGrowing = false;
+                    length++;
+                }
                 snakeLocations.unshift([x, y]);
                 break;
             case "down":
@@ -232,7 +289,10 @@
                 if (!snakeGrowing)
                     snakeLocations.pop();
                 else
+                {
                     snakeGrowing = false;
+                    length++;
+                }
                 snakeLocations.unshift([x, y]);
                 break;
             case "right":
@@ -240,7 +300,10 @@
                 if (!snakeGrowing)
                     snakeLocations.pop();
                 else
+                {
                     snakeGrowing = false;
+                    length++;
+                }
                 snakeLocations.unshift([x, y]);
                 break;
             case "left":
@@ -248,7 +311,10 @@
                 if (!snakeGrowing)
                     snakeLocations.pop();
                 else
+                {
                     snakeGrowing = false;
+                    length++;
+                }
                 snakeLocations.unshift([x, y]);
                 break;
         }
