@@ -35,6 +35,7 @@
     </body>
 </html>
 
+
 <script> //basic functions 
     var canvas = document.getElementById("myCanvas");
     var context = canvas.getContext("2d");
@@ -56,10 +57,14 @@
     var lengthHolder = 0;
     var fruitPos = generateFruitLocation();
     var refreshRate = 100;
+    var currentlyCounting = false;
     //var maxRefreshRate = 100;
 
     //initalizing board
+
+
     refresh();
+    
 
 
     function pause()
@@ -71,20 +76,44 @@
         }
         else
         {
-            snakeDirection = previousSnakeDirection;
+            const countDown = new Promise((resolve, reject) => {
+                currentlyCounting = true;
+                var current = 3;
+                counter();
+                function counter()
+                {
+                    if (current < 1) 
+                    {
+                        resolve("done");
+                        currentlyCounting = false;
+                        return;
+                    }
+                    erase();
+                    context.font = "240px Arial";
+                    context.fillStyle = "rgb(139, 129, 129)";
+                    context.textAlign = "center";
+                    context.fillText(current--, canvas.width/2, canvas.height/2 + (canvas.height/8));
+                    setTimeout(counter, 500);
+                }
+                
+                });
+
+            countDown.then((value) => {
+                snakeDirection = previousSnakeDirection;
+            })
         }
     }
 
     function updateScore()
     {
-        if (snakeDirection == "still")
+        if (snakeDirection == "still" && !currentlyCounting)
         {
             context.font = "120px Arial";
             context.fillStyle = "rgb(139, 129, 129)";
             context.textAlign = "center";
             context.fillText("PAUSED", canvas.width/2, canvas.height/2);
         }
-        else
+        else if (!currentlyCounting)
         {
             context.font = "240px Arial";
             context.fillStyle = "rgb(139, 129, 129)";
@@ -112,18 +141,25 @@
 
     function refresh()
     {
+        
         if (alwaysGrowing)
         {
             snakeGrowing = true;
         }
-        erase();
+        if (!currentlyCounting)
+        {
+            erase();
+        }
         //createGrid();
         moveSnake();
         checkSnakeSnakeCollisions();
         checkSnakeFruitCollisions();
         updateScore();
-        drawSnake();
-        drawFruit();
+        if (!currentlyCounting)
+        {
+            drawSnake();
+            drawFruit();
+        }
         // var currentRefreshRate = (refreshRate + length);
         // if (currentRefreshRate > maxRefreshRate)
         //     currentRefreshRate = maxRefreshRate;
@@ -216,7 +252,10 @@
                         {
                             snakeDirection = "up";
                         }
-                        pause(); 
+                        else
+                        {
+                            pause(); 
+                        }
                         break;
                     }
                     if (snakeDirection != "down")
@@ -229,7 +268,10 @@
                         {
                             snakeDirection = "down";
                         }
-                        pause(); 
+                        else
+                        {
+                            pause(); 
+                        }
                         break;
                     }
                     if (snakeDirection != "up")
@@ -242,7 +284,10 @@
                         {
                             snakeDirection = "right";
                         }
-                        pause(); 
+                        else
+                        {
+                            pause(); 
+                        }
                         break;
                     }
                     if (snakeDirection != "left")
@@ -255,7 +300,10 @@
                         {
                             snakeDirection = "left";
                         }
-                        pause(); 
+                        else
+                        {
+                            pause(); 
+                        }
                         break;
                     }
                     if (snakeDirection != "right")
